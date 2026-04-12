@@ -3,6 +3,7 @@ local Players = game:GetService("Players")
 local SpeedEvent = {}
 SpeedEvent.Name = "Speed"
 SpeedEvent.Duration = 10
+SpeedEvent.Intensity = 2
 SpeedEvent._originalSpeeds = {}
 
 function SpeedEvent:Start(_context)

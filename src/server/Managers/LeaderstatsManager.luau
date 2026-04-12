@@ -11,6 +11,11 @@ function LeaderstatsManager:SetupPlayer(player: Player)
 		return
 	end
 
+	local previous = player:FindFirstChild("leaderstats")
+	if previous then
+		previous:Destroy()
+	end
+
 	local folder = Instance.new("Folder")
 	folder.Name = "leaderstats"
 	folder.Parent = player

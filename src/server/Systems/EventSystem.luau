@@ -1,5 +1,5 @@
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Workspace = game:GetService("Workspace")
 
 local Configs = ReplicatedStorage:WaitForChild("Configs")
@@ -14,7 +14,6 @@ local eventEndedEvent = Remotes:WaitForChild(RemoteNames.EventEnded)
 local EventSystem = {}
 EventSystem.Events = {}
 EventSystem.CurrentEvent = nil
-EventSystem.CurrentTask = nil
 
 local function loadEventModules()
 	local folder = ServerScriptService.Systems:WaitForChild("Events")
@@ -52,7 +51,7 @@ function EventSystem:StopCurrentEvent()
 end
 
 function EventSystem:TriggerRandomEvent(context)
-	if self.CurrentEvent then
+	if self.CurrentEvent and EventConfig.AllowOnlyOneActiveEvent then
 		self:StopCurrentEvent()
 	end
 
@@ -63,13 +62,14 @@ function EventSystem:TriggerRandomEvent(context)
 	end
 
 	local duration = eventModule.Duration or EventConfig.DefaultDuration
+	local intensity = eventModule.Intensity or 1
 	self.CurrentEvent = eventModule
 
 	if eventModule.Start then
 		eventModule:Start(context)
 	end
 
-	eventStartedEvent:FireAllClients(eventModule.Name)
+	eventStartedEvent:FireAllClients(eventModule.Name, duration, intensity)
 
 	task.delay(duration, function()
 		if self.CurrentEvent == eventModule then

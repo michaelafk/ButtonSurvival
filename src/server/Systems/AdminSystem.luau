@@ -2,7 +2,6 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Configs = ReplicatedStorage:WaitForChild("Configs")
-local EventConfig = require(Configs:WaitForChild("EventConfig"))
 local AdminConfig = require(Configs:WaitForChild("AdminConfig"))
 
 local AdminSystem = {}
@@ -33,12 +32,25 @@ function AdminSystem:HandleCommand(player: Player, message: string)
 	local lower = string.lower(message)
 	if lower == "!startround" then
 		self._gameStateSystem:StartRoundNow()
-	elseif lower == "!endround" then
+		return
+	end
+
+	if lower == "!endround" then
 		self._roundManager:ForceEnd("ForcedByAdmin")
-	elseif lower == "!forceevent" then
+		return
+	end
+
+	if lower == "!forceevent" then
 		self._eventSystem:TriggerRandomEvent({ Activator = player, Source = "Admin" })
-	elseif string.sub(lower, 1, 9) == "!loadmap " then
-		warn("[AdminSystem] Cargar mapa específico queda como punto de extensión")
+		return
+	end
+
+	if string.sub(lower, 1, 9) == "!loadmap " then
+		local requestedMap = string.sub(message, 10)
+		if requestedMap ~= "" then
+			self._roundManager:SetForcedMap(requestedMap)
+		end
+		return
 	end
 end
 

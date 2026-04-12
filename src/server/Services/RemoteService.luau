@@ -15,6 +15,7 @@ local REMOTE_DEFINITIONS = {
 	[remoteNames.EventStarted] = "RemoteEvent",
 	[remoteNames.EventEnded] = "RemoteEvent",
 	[remoteNames.GetCurrentState] = "RemoteFunction",
+	[remoteNames.RequestEquipItem] = "RemoteFunction",
 }
 
 function RemoteService:Init()

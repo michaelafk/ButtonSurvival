@@ -62,8 +62,17 @@ roundEndedEvent.OnClientEvent:Connect(function(reason: string, winners: {string}
 	setText("StatusText", string.format("Ronda terminada (%s). Ganadores: %s", reason, winnersText))
 end)
 
-eventStartedEvent.OnClientEvent:Connect(function(eventName: string)
-	setText("StatusText", "Evento: " .. eventName)
+eventStartedEvent.OnClientEvent:Connect(function(eventName: string, duration: number?, intensity: number?)
+	local details = {}
+	if duration then
+		table.insert(details, string.format("%ds", duration))
+	end
+	if intensity then
+		table.insert(details, "intensidad " .. tostring(intensity))
+	end
+
+	local suffix = #details > 0 and (" (" .. table.concat(details, ", ") .. ")") or ""
+	setText("StatusText", "Evento: " .. eventName .. suffix)
 end)
 
 eventEndedEvent.OnClientEvent:Connect(function(eventName: string)

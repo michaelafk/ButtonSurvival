@@ -1,6 +1,7 @@
 local ExplosionEvent = {}
 ExplosionEvent.Name = "Explosions"
 ExplosionEvent.Duration = 6
+ExplosionEvent.Intensity = 2
 
 function ExplosionEvent:Start(_context)
 	print("[ExplosionEvent] Explosiones iniciadas")

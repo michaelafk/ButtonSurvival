@@ -4,6 +4,7 @@ local PlayerManager = {}
 PlayerManager._dataManager = nil
 PlayerManager._leaderstatsManager = nil
 PlayerManager._inventoryManager = nil
+PlayerManager._spawnManager = nil
 PlayerManager.Participants = {}
 PlayerManager.AlivePlayers = {}
 
@@ -15,11 +16,19 @@ function PlayerManager:Init(dataManager, leaderstatsManager, inventoryManager)
 	self.AlivePlayers = {}
 end
 
+function PlayerManager:SetSpawnManager(spawnManager)
+	self._spawnManager = spawnManager
+end
+
 function PlayerManager:SetupPlayer(player: Player)
 	self._dataManager:LoadPlayerData(player)
 	self._inventoryManager:SetupPlayer(player)
 	self._leaderstatsManager:SetupPlayer(player)
 	self._leaderstatsManager:SyncPlayer(player)
+
+	if self._spawnManager then
+		self._spawnManager:BindPlayer(player)
+	end
 end
 
 function PlayerManager:ReleasePlayer(player: Player)
@@ -62,6 +71,11 @@ function PlayerManager:SetParticipants(players: {Player})
 		self.Participants[player] = true
 		self.AlivePlayers[player] = true
 	end
+end
+
+function PlayerManager:ClearRoundState()
+	table.clear(self.Participants)
+	table.clear(self.AlivePlayers)
 end
 
 function PlayerManager:IsParticipant(player: Player)

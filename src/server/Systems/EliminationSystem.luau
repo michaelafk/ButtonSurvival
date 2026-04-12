@@ -6,10 +6,20 @@ local playerEliminatedEvent = Remotes:WaitForChild(RemoteNames.PlayerEliminated)
 
 local EliminationSystem = {}
 EliminationSystem._playerManager = nil
+EliminationSystem._roundManager = nil
 EliminationSystem._connections = {}
 
-function EliminationSystem:Init(playerManager)
+local function getKillerFromHumanoid(humanoid: Humanoid)
+	local creator = humanoid:FindFirstChild("creator")
+	if creator and creator.Value and creator.Value:IsA("Player") then
+		return creator.Value
+	end
+	return nil
+end
+
+function EliminationSystem:Init(playerManager, roundManager)
 	self._playerManager = playerManager
+	self._roundManager = roundManager
 	self._connections = {}
 end
 
@@ -34,7 +44,8 @@ function EliminationSystem:BindParticipants(players: {Player})
 
 			table.insert(self._connections, humanoid.Died:Connect(function()
 				if self._playerManager:IsAlive(player) then
-					self._playerManager:MarkEliminated(player)
+					local killer = getKillerFromHumanoid(humanoid)
+					self._roundManager:HandlePlayerEliminated(player, killer)
 					playerEliminatedEvent:FireAllClients(player.Name)
 				end
 			end))

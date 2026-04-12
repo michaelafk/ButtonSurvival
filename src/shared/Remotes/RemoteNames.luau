@@ -8,6 +8,7 @@ local RemoteNames = {
 	EventStarted = "RE_EventStarted",
 	EventEnded = "RE_EventEnded",
 	GetCurrentState = "RF_GetCurrentState",
+	RequestEquipItem = "RF_RequestEquipItem",
 }
 
 return RemoteNames
