@@ -2,23 +2,41 @@
   "name": "ButtonSurvival",
   "tree": {
     "$className": "DataModel",
-
     "ReplicatedStorage": {
+      "Remotes": {
+        "$path": "src/shared/Remotes"
+      },
       "Shared": {
-        "$path": "src/shared"
+        "$path": "src/shared/Shared"
+      },
+      "Configs": {
+        "$path": "src/shared/Configs"
       }
     },
-
     "ServerScriptService": {
-      "Server": {
-        "$path": "src/server"
+      "Managers": {
+        "$path": "src/server/Managers"
+      },
+      "Systems": {
+        "$path": "src/server/Systems"
+      },
+      "Services": {
+        "$path": "src/server/Services"
+      },
+      "Modules": {
+        "$path": "src/server/Modules"
+      },
+      "Main": {
+        "$path": "src/server/init.server.luau"
       }
     },
-
     "StarterPlayer": {
       "StarterPlayerScripts": {
-        "Client": {
-          "$path": "src/client"
+        "Controllers": {
+          "$path": "src/client/Controllers"
+        },
+        "Main": {
+          "$path": "src/client/init.client.luau"
         }
       }
     }

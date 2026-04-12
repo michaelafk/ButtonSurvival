@@ -1,2 +1,4 @@
-print("Hello world, from server!")
-local tbl = { "fish", 123, "Twnty", "sobad" }
+local ServerScriptService = game:GetService("ServerScriptService")
+
+local Bootstrap = require(ServerScriptService.Modules:WaitForChild("Bootstrap"))
+Bootstrap:Start()
