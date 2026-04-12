@@ -56,9 +56,9 @@ Cumplido.
 ## 7. Sistema de eventos aleatorios
 Cumplido.
 Base modular en `ServerScriptService/Systems/Events`.
-Eventos incluidos:
-- lluvia de objetos
-- explosiones
+Eventos incluidos y funcionales:
+- lluvia de objetos con daño
+- explosiones periódicas con daño de área
 - aumento de velocidad
 - desaparición de suelo
 

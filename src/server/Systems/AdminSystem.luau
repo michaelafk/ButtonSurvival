@@ -41,7 +41,7 @@ function AdminSystem:HandleCommand(player: Player, message: string)
 	end
 
 	if lower == "!forceevent" then
-		self._eventSystem:TriggerRandomEvent({ Activator = player, Source = "Admin" })
+		self._eventSystem:TriggerRandomEvent({ Activator = player, Source = "Admin", CurrentMap = self._roundManager.CurrentMap })
 		return
 	end
 

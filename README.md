@@ -9,13 +9,14 @@ Base de arquitectura Roblox + Rojo con los sistemas principales implementados y 
 - Sistema de spawn de lobby y ronda
 - Sistema de rondas
 - Sistema del botón principal
-- Base modular de eventos aleatorios
+- Base modular de eventos aleatorios con efectos funcionales
 - Sistema de eliminación y supervivencia
 - Leaderstats
 - Guardado de datos
 - Inventario/equipamiento base
 - Comunicación servidor-cliente validada
 - Administración básica
+- Los eventos Rain, Explosions, Speed y DisappearFloor tienen implementación jugable real
 
 ## Elementos que debes crear en Roblox Studio
 - `Workspace/LobbySpawns` con Parts de spawn, o un `LobbySpawn`

@@ -25,7 +25,7 @@ function ButtonSystem:Press(player: Player)
 	self.IsLocked = true
 	self.LastActivator = player
 
-	local eventName = self._eventSystem:TriggerRandomEvent({ Activator = player, Workspace = Workspace }) or "None"
+	local eventName = self._eventSystem:TriggerRandomEvent({ Activator = player, Workspace = Workspace, CurrentMap = self._roundManager.CurrentMap }) or "None"
 	buttonPressedEvent:FireAllClients(player.Name, eventName)
 
 	task.delay(self.LockDuration, function()
