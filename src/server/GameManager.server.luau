@@ -4,6 +4,9 @@ print("GAME MANAGER INICIADO")
 --y por otro lado obtenemos los modulos compartidos que estan en el replicatedstorage
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Shared = ReplicatedStorage:WaitForChild("Shared")
+local Remotes = Shared:WaitForChild("Remotes")
+local updateTimerEvent = Remotes:WaitForChild("UpdateTimer")
 
 --Cargamos la configuracion compartida del juego
 local GameConfig = require(ReplicatedStorage.Shared.GameConfig)
@@ -54,6 +57,26 @@ local function teleportAllPlayers(targetPart)
 	end
 end
 
+--Esta funcion define donde aparece un jugador
+--cada vez que entra o reaparece
+local function setupPlayer(player)
+	player.CharacterAdded:Connect(function(character)
+		task.wait(0.5)
+		--si el jugador entra se le llevara al lobby
+		if GameState == "Match" then
+			teleportCharacter(character, LobbySpawn)
+		end
+	end)
+end
+
+--Conectar jugadores nuevos
+Players.PlayerAdded:Connect(setupPlayer)
+
+--Conectar jugadores que ya estaban dentro al iniciar el script
+for _, player in ipairs(Players:GetPlayers()) do
+	setupPlayer(player)
+end
+
 local function startLobbyPhase()
 	--Indicamos que ahora el juego esta en fase lobby
 	GameState = "Lobby"
@@ -62,11 +85,23 @@ local function startLobbyPhase()
 	--Enviamos a todos los jugadores al punto del lobby
 	teleportAllPlayers(LobbySpawn)
 
+	--Hasta que no haya un minimo de jugadores no se empieza la cuenta atras del lobby
+	while #Players:GetPlayers() < GameConfig.MIN_PLAYERS do
+		updateTimerEvent:FireAllClients("Esperando jugadores...")
+		task.wait(1)
+	end
+	print("Suficientes jugadores, iniciando cuenta atras")
 	--Cuenta atras del lobby.
 	--Empieza en el numero configurado en GameConfig
 	--y va bajando hasta 1
 	for i = GameConfig.LOBBY_WAIT_TIME, 1, -1 do
-		print("La partida empieza en " .. i .. " segundos")
+		--si durante la cuenta atras un jugador se va y el numero de jugadores es
+		--menor al minimo se para la cuenta atras
+		if #Players:GetPlayers() < GameConfig.MIN_PLAYERS then
+			updateTimerEvent:FireAllClients("Esperando jugadores...")
+			return
+		end
+		updateTimerEvent:FireAllClients("Empieza en: " .. i)
 		task.wait(1)
 	end
 end
@@ -78,16 +113,15 @@ local function startMatchPhase()
 	print("La partida ha comenzado")
 	--Enviamos a todos los jugadores al mapa.
 	teleportAllPlayers(MapSpawn)
+	for i = GameConfig.MATCH_DURATION, 1, -1 do
+		updateTimerEvent:FireAllClients("Tiempo restante: " .. i)
+		task.wait(1)
+	end
 end
 
 --Bucle principal del juego,
---de momento solo queremos probar una transicion simple:
---Lobby -> Mapa
+--Lobby -> Mapa --> Lobby
 while true do
 	startLobbyPhase()
 	startMatchPhase()
-	--Este break hace que el bucle se ejecute una sola vez
-	--lo dejamos asi ahora para probar la funcionalidad basica
-	--sin que vuelva continuamente al lobby
-	break
 end
