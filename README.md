@@ -1,47 +1,59 @@
-# ButtonSurvival
+## Estado del proyecto
+Actualmente el proyecto cuenta con:
+- Sistema de ciclo de juego completo (Lobby → Intermission → Match → Ending)
+- Sincronización cliente-servidor mediante `RemoteEvents` y `RemoteFunctions`
+- Interfaz dinámica con actualización en tiempo real
+- Arquitectura preparada para escalar mediante nuevas funcionalidades modulares
 
-Base de arquitectura Roblox + Rojo con los sistemas principales implementados y preparados para servir como base de documentación de desarrollo.
-
-## Incluye
-- Estructura base del proyecto
-- Sistema de estado de partida
+## Sistemas implementados
+- Estructura base del proyecto con Rojo
+- Sistema de estados de partida (Game State)
 - Validación de jugadores mínimos
-- Sistema de spawn de lobby y ronda
-- Sistema de rondas
+- Sistema de spawn (Lobby y ronda)
+- Sistema de rondas básico
 - Sistema del botón principal
-- Base modular de eventos aleatorios con efectos funcionales
+- Base modular para eventos aleatorios
 - Sistema de eliminación y supervivencia
 - Leaderstats
-- Guardado de datos
-- Inventario/equipamiento base
+- Persistencia de datos (DataStore)
+- Inventario / equipamiento base
 - Comunicación servidor-cliente validada
-- Administración básica
-- Los eventos Rain, Explosions, Speed y DisappearFloor tienen implementación jugable real
+- Sistema de administración básico
 
-## Elementos que debes crear en Roblox Studio
-- `Workspace/LobbySpawns` con Parts de spawn, o un `LobbySpawn`
-- `Workspace/Maps` con mapas opcionales. Cada mapa puede incluir `RoundSpawns` o `SpawnPoints`
-- `Workspace/RoundSpawns` o `MapSpawn` como fallback si el mapa no trae sus propios puntos
-- `Workspace/MainButton` con `ProximityPrompt` o `ClickDetector` opcional
-- `StarterGui/GameUI` con labels opcionales `TimerText`, `StateText`, `StatusText`
-- Parts de suelo con nombre `Floor` o atributo `IsEventFloor = true` para el evento de desaparición de suelo
+## Eventos implementados
+- 🌧️ Rain  
+- 💥 Explosions  
+- ⚡ Speed  
+- 🧱 DisappearFloor
+Todos los eventos tienen implementación jugable funcional.
 
-## Convenciones
-- Managers: `XManager.luau`
-- Systems: `XSystem.luau`
-- Services: `XService.luau`
-- Client controllers: `XController.client.luau`
-- Shared enums/types: `X.luau`
-- Configs: `XConfig.luau`
-- RemoteEvents: `RE_X`
-- RemoteFunctions: `RF_X`
-- Modelos de remotos de Rojo: `RE_X.model.json` / `RF_X.model.json`
+##  Organización de código
+- **Managers** → `XManager.luau`  
+- **Systems** → `XSystem.luau`  
+- **Services** → `XService.luau`  
+- **Client Controllers** → `XController.client.luau`  
+- **Shared enums/types** → `X.luau`  
+- **Configs** → `XConfig.luau`  
 
-## Comandos de admin
-- `!startround`
-- `!endround`
-- `!loadmap NombreDelMapa`
-- `!forceevent`
+## Flujo de desarrollo
+El proyecto sigue un flujo basado en ramas *feature*:
+## Reglas
+- Cada funcionalidad se desarrolla en una rama independiente:
+  - `feature/game-cycle`
+  - `feature/game-cycle-refactor`
+  - `feature/event-button`
+  - etc.
+- Las ramas se integran en `develop` mediante merge controlado
 
-## Documentación adicional
-Consulta `docs/DEVELOPMENT_DOCUMENTATION.md` para el checklist completo por sistema y `docs/REMOTE_DOCUMENTATION.md` para el detalle de remotos.
+## Rama experimental
+Esta es una rama de carácter **experimental/prototipo** que contiene múltiples sistemas avanzados implementados de forma conjunta.
+## !!IMPORTANTE¡¡
+Esta rama:
+- NO forma parte del flujo principal de desarrollo  
+- NO debe integrarse directamente en `develop`  
+- NO sigue la filosofía de una feature por rama  
+## Uso correcto
+Se utiliza para:
+- Analizar implementaciones avanzadas  
+- Extraer fragmentos de código reutilizables  
+- Inspirar futuras funcionalidades
