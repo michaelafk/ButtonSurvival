@@ -38,6 +38,7 @@ El PR debe incluir:
 Antes de integrar los cambios en `develop`, se debe:
 - Revisar el código
 - Resolver posibles conflictos  
-- Validar que todo funciona correctamente  
-Este paso de revisión y validacion lo hara el integrante michael, una vez que este validada y no
+- Validar que todo funciona correctamente
+
+Este paso de revisión y validacion lo hara el integrante **Michael**, una vez que este validada y no
 haya errores se procedera a hacer el merge correspondiente.
