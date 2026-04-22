@@ -7,6 +7,7 @@ local GameConfig = require(Shared:WaitForChild("GameConfig"))
 local Remotes = Shared:WaitForChild("Remotes")
 local updateTimerEvent = Remotes:WaitForChild("UpdateTimer")
 local getCurrentStateFunction = Remotes:WaitForChild("GetCurrentState")
+local buttonAppearedEvent = Remotes:WaitForChild("ButtonAppeared")
 --Referencias al jugador y su UI
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
@@ -53,6 +54,9 @@ end
 --Eventos
 updateTimerEvent.OnClientEvent:Connect(function(state, timeLeft, message)
 	updateUI(state, timeLeft, message)
+end)
+buttonAppearedEvent.OnClientEvent:Connect(function(message)
+	statusText.Text = message
 end)
 --Inicio
 syncInitialState()

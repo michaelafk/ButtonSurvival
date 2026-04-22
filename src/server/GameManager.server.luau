@@ -2,7 +2,12 @@ print("GAME MANAGER INICIADO")
 --Obtenermos los servicios que vamos a usar
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local ServerScriptService = game:GetService("ServerScriptService")
+
 --Obtenemos los modulos y los remotos a usar
+local Server = ServerScriptService:WaitForChild("Server")
+local Systems = Server:WaitForChild("Systems")
+local ButtonSystem = require(Systems:WaitForChild("ButtonSystem"))
 local Shared = ReplicatedStorage:WaitForChild("Shared")
 local Remotes = Shared:WaitForChild("Remotes")
 local updateTimerEvent = Remotes:WaitForChild("UpdateTimer")
@@ -129,10 +134,12 @@ end
 local function runMatch()
 	setGameState(GameConfig.GameStates.Match)
 	teleportAllPlayers(MapSpawn)
+	ButtonSystem.SpawnButton()
 	for i = GameConfig.MATCH_DURATION, 1, -1 do
 		updateUI(GameConfig.GameStates.Match, i, GameConfig.UI.MatchMessage)
 		task.wait(1)
 	end
+	ButtonSystem.HideButton()
 end
 --Fase de cierre
 local function runEnding()
