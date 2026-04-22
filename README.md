@@ -31,6 +31,10 @@ Una vez realizados los commits, sube tu rama al repositorio remoto:
 ```
 ### Crear Pull Request
 Crea un **Pull Request (PR)** desde tu rama `feature` hacia `develop`.
+Es imporante que antes de enviar el PR revisieis que se esta haciendo el PR desde la rama `feature` hacia develop,
+para ello debeis de poner en el pr lo siguiente:
+**base**: `develop`
+**compare**: `feature/nombre-de-la-funcionalidad`
 El PR debe incluir:
 - Descripción de lo implementado (breve resumen) 
 - Objetivo de la funcionalidad  
