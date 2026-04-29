@@ -8,6 +8,7 @@ local ServerScriptService = game:GetService("ServerScriptService")
 local Server = ServerScriptService:WaitForChild("Server")
 local Systems = Server:WaitForChild("Systems")
 local ButtonSystem = require(Systems:WaitForChild("ButtonSystem"))
+local EventSystem = require(Systems:WaitForChild("EventSystem"))
 local Shared = ReplicatedStorage:WaitForChild("Shared")
 local Remotes = Shared:WaitForChild("Remotes")
 local updateTimerEvent = Remotes:WaitForChild("UpdateTimer")
@@ -144,6 +145,9 @@ end
 --Fase de cierre
 local function runEnding()
 	setGameState(GameConfig.GameStates.Ending)
+	--limpiar cualquier evento activo
+	local roundPlayers = Players:GetPlayers()
+	EventSystem.CleanupCurrentEvent(roundPlayers)
 	for i = GameConfig.ENDING_TIME, 1, -1 do
 		updateUI(GameConfig.GameStates.Ending, i, GameConfig.UI.EndingMessage)
 		task.wait(1)
