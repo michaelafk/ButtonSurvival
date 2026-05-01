@@ -52,7 +52,6 @@ local function chooseRandomPlayer(players)
 end
 
 --Logica del evento
-
 --Añade el contorno rojo al jugador marcado
 local function addMarkedHighlight(player)
 	local character = player.Character
@@ -139,6 +138,10 @@ local function removeBats(players)
 			end
 		end
 	end
+end
+--Funcion para obtener el jugador "el marcado"
+function MarkedEvent.GetMarkedPlayer()
+	return markedPlayer
 end
 --Inicio del evento
 function MarkedEvent.Start(players, onEventFinished)
