@@ -21,10 +21,11 @@ local MapSpawn = workspace:WaitForChild("MapSpawn")
 local currentGameState = GameConfig.GameStates.Waiting
 local currentTimeleft = 0
 local currentStatusMessage = GameConfig.UI.WaitingMessage
+local roundEnding = false
 --Funciones de apoyo
 --Devuelve el numero actual de jugadores conectados
 local function getPlayerCount()
-	return #Players:getPlayers()
+	return #Players:GetPlayers()
 end
 --Cambia el estado actual del juego
 local function setGameState(newState)
@@ -133,10 +134,14 @@ local function runIntermission()
 end
 --Fase de partida
 local function runMatch()
+	roundEnding = false
 	setGameState(GameConfig.GameStates.Match)
 	teleportAllPlayers(MapSpawn)
 	ButtonSystem.SpawnButton()
 	for i = GameConfig.MATCH_DURATION, 1, -1 do
+		if roundEnding then
+			break
+		end
 		updateUI(GameConfig.GameStates.Match, i, GameConfig.UI.MatchMessage)
 		task.wait(1)
 	end
@@ -154,6 +159,19 @@ local function runEnding()
 	end
 	teleportAllPlayers(LobbySpawn)
 end
+--funcion para finalizar correctamente
+local function endRound()
+	if roundEnding then
+		return
+	end
+	--Solo avisamos de que la ronda debe terminar
+	roundEnding = true
+	ButtonSystem.HideButton()
+end
+ButtonSystem.SetOnEventFinished(function(winner)
+	print("[GameManager] Evento terminado. Ganador:", winner)
+	endRound()
+end)
 --Bucle principal del juego,
 --Espera minima de jugadores --> Lobby --> Partida -->Fin de partida --> Lobby
 while true do

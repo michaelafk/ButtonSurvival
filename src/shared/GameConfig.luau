@@ -2,7 +2,7 @@
 local GameConfig = {}
 --Configuracion general del ciclo de juego
 GameConfig.INTERMISSION_TIME = 10
-GameConfig.MATCH_DURATION = 30
+GameConfig.MATCH_DURATION = 60
 GameConfig.MIN_PLAYERS = 2
 GameConfig.ENDING_TIME = 5
 --Estados del juego
