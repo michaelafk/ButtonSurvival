@@ -14,9 +14,9 @@ local buttonSpawnsFolder = workspace:WaitForChild("ButtonSpawns")
 local proximityPrompt = buttonPart:WaitForChild("ProximityPrompt")
 --Obtenemos el sistema de eventos
 local EventSystem = require(script.Parent.EventSystem)
-
+--Variables a usar
 local buttonPressed = false
-
+local onEventFinishedCallback = nil
 --Devuelvetodos lo spuntos validos de spawn del boton
 local function getButtonSpawns()
 	local spawns = {}
@@ -64,7 +64,10 @@ local function animateButtonPress()
 	task.wait(0.05)
 	releaseTween:Play()
 end
-
+--Permite que el GameManager registre que debe pasar cuando un evento termina
+function ButtonSystem.SetOnEventFinished(callback)
+	onEventFinishedCallback = callback
+end
 --Hace aparecer el boton en una posición aleatoria
 function ButtonSystem.SpawnButton()
 	local chosenSpawn = getRandomSpawn()
@@ -112,7 +115,11 @@ local function handleButtonPressed(player)
 			print("[ButtonSystem] El marcado gana")
 		end
 		buttonPressed = false
-		proximityPrompt = true
+		--Avisamos al GameManager de que el evento ha terminado
+		if onEventFinishedCallback then
+			onEventFinishedCallback(winner)
+		end
+		proximityPrompt.Enabled = true
 	end)
 end
 
