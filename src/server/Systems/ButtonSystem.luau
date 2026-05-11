@@ -17,6 +17,21 @@ local EventSystem = require(script.Parent.EventSystem)
 --Variables a usar
 local buttonPressed = false
 local onEventFinishedCallback = nil
+
+-- Cambia este valor durante las pruebas: "Random", "Marked", "Tsunami" o "Earthquake"
+local EVENT_TO_TEST = "Tsunami"
+
+local function startConfiguredGlobalEvent(roundPlayers, callback)
+	if EVENT_TO_TEST == "Marked" then
+		return EventSystem.StartMarkedEvent(roundPlayers, callback)
+	elseif EVENT_TO_TEST == "Tsunami" then
+		return EventSystem.StartTsunamiEvent(roundPlayers, callback)
+	elseif EVENT_TO_TEST == "Earthquake" then
+		return EventSystem.StartEarthquakeEvent(roundPlayers, callback)
+	end
+
+	return EventSystem.StartRandomGlobalEvent(roundPlayers, callback)
+end
 --Devuelvetodos lo spuntos validos de spawn del boton
 local function getButtonSpawns()
 	local spawns = {}
@@ -101,26 +116,40 @@ local function handleButtonPressed(player)
 
 	animateButtonPress()
 
-	print("[ButtonSystem] El jugador " .. player.Name .. "ha pulsado el boton")
-	print("[ButtonSystem] Se va a ejecutar el evetno 'El marcado'")
+	print("[ButtonSystem] El jugador " .. player.Name .. " ha pulsado el boton")
+	print("[ButtonSystem] Se va a ejecutar el evento configurado:", EVENT_TO_TEST)
 
 	--Inicio del evento
 	--Usaremos a todos los jugadores(luego se cambiara a solo los de la ronda)
 	local roundPlayers = Players:GetPlayers()
-	EventSystem.StartMarkedEvent(roundPlayers, function(winner)
+	local startedEvent = startConfiguredGlobalEvent(roundPlayers, function(winner)
 		print("[ButtonSystem] Resultado del evento:", winner)
-		if winner == "Hunters" then
-			print("[ButtonSystem] Los cazadores ganan")
+		if winner == "Survivors" then
+			print("[ButtonSystem] Algunos jugadores han sobrevivido al evento")
+		elseif winner == "Tsunami" then
+			print("[ButtonSystem] El tsunami ha eliminado a todos")
+		elseif winner == "Earthquake" then
+			print("[ButtonSystem] El terremoto ha eliminado a todos")
 		elseif winner == "Marked" then
-			print("[ButtonSystem] El marcado gana")
+			print("[ButtonSystem] El marcado ha sobrevivido")
+		elseif winner == "Hunters" then
+			print("[ButtonSystem] Los cazadores han eliminado al marcado")
 		end
+
 		buttonPressed = false
+
 		--Avisamos al GameManager de que el evento ha terminado
 		if onEventFinishedCallback then
 			onEventFinishedCallback(winner)
 		end
+
 		proximityPrompt.Enabled = true
 	end)
+
+	if not startedEvent then
+		buttonPressed = false
+		proximityPrompt.Enabled = true
+	end
 end
 
 proximityPrompt.Triggered:Connect(handleButtonPressed)
