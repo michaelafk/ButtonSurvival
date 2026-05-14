@@ -9,6 +9,7 @@ local Managers = Server:WaitForChild("Managers")
 local ButtonSystem = require(Systems:WaitForChild("ButtonSystem"))
 local EventSystem = require(Systems:WaitForChild("EventSystem"))
 local PlayerManager = require(Managers:WaitForChild("PlayerManager"))
+local ScoreManager = require(Managers:WaitForChild("ScoreManager"))
 local Shared = ReplicatedStorage:WaitForChild("Shared")
 local Remotes = Shared:WaitForChild("Remotes")
 local updateTimerEvent = Remotes:WaitForChild("UpdateTimer")
@@ -30,6 +31,8 @@ PlayerManager.Init({
 		return currentGameState
 	end,
 })
+--Inicializar el ScoreManager
+ScoreManager.Init()
 --Funciones de apoyo
 --Cambia el estado actual del juego
 local function setGameState(newState)
@@ -85,9 +88,15 @@ end
 --Fase de partida
 local function runMatch()
 	roundEnding = false
+	--Limpiamos jugadores eliminados de la ronda anterior
 	PlayerManager.ResetEliminatedPlayers()
+	--Guardamos los jugdores que empiezan esta ronda
+	local playerStartingRound = PlayerManager.GetAllPlayers()
+	PlayerManager.SetRoundPlayers(playerStartingRound)
+	--Ponemos el estado del juego en match
 	setGameState(GameConfig.GameStates.Match)
-	PlayerManager.TeleportAllPlayersToMap()
+	--Transportamos solo los jugadores de ronda
+	PlayerManager.TeleportRoundPlayersToMap()
 	ButtonSystem.SpawnButton()
 	for i = GameConfig.MATCH_DURATION, 1, -1 do
 		if roundEnding then
@@ -101,6 +110,13 @@ end
 --Fase de cierre
 local function runEnding()
 	setGameState(GameConfig.GameStates.Ending)
+	--obtener jugadores vivos antes de limpiar la ronda
+	local alivePlayers = PlayerManager.GetAliveRoundPlayers()
+	--obtener jugador marcado actual antes de limpiar el evento
+	local eventResult = EventSystem.GetCurrentEventResult()
+	local markedPlayer = eventResult and eventResult.MarkedPlayer
+	--dar puntos por la ronda
+	ScoreManager.GiveSurvivalPoints(alivePlayers, markedPlayer)
 	--limpiar cualquier evento activo
 	local roundPlayers = PlayerManager.GetAllPlayers()
 	EventSystem.CleanupCurrentEvent(roundPlayers)
@@ -108,7 +124,9 @@ local function runEnding()
 		updateUI(GameConfig.GameStates.Ending, i, GameConfig.UI.EndingMessage)
 		task.wait(1)
 	end
-	PlayerManager.TeleportAllPlayersToLobby()
+	PlayerManager.TeleportRoundPlayersToLobby()
+	--limpiar jugadores de ronda al terminar
+	PlayerManager.ResetRoundPlayers()
 end
 --funcion para finalizar correctamente
 local function endRound()
