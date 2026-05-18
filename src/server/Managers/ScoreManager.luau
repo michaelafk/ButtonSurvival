@@ -47,6 +47,15 @@ end
 function ScoreManager.Init()
 	Players.PlayerAdded:connect(function(player)
 		scores[player] = 0
+
+		local leaderstats = Instance.new("Folder")
+		leaderstats.Name = "leaderstats"
+		leaderstats.Parent = player
+
+		local points = Instance.new("IntValue")
+		points.Name = "Points"
+		points.Value = 0
+		points.Parent = leaderstats
 		updateLeaderboard()
 	end)
 	Players.PlayerRemoving:Connect(function(player)
@@ -64,6 +73,14 @@ function ScoreManager.AddPoints(player, amount)
 	end
 	scores[player] = scores[player] or 0
 	scores[player] += amount
+
+	local leaderstats = player:FindFirstChild("leaderstats")
+	if leaderstats then
+		local points = leaderstats:FindFirstChild("Points")
+		if points then
+			points.Value = scores[player]
+		end
+	end
 	updateLeaderboard()
 end
 function ScoreManager.GiveButtonPressPoints(player)
