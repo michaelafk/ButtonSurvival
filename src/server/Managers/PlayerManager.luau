@@ -123,7 +123,7 @@ function PlayerManager.TeleportAllPlayers(targetPart)
 	end
 end
 function PlayerManager.TeleportRoundPlayers(targetPart)
-	for _, player in ipairs(roundPlayers) do
+	for _, player in pairs(roundPlayers) do
 		PlayerManager.TeleportPlayer(player, targetPart)
 	end
 end

@@ -45,7 +45,7 @@ local function updateLeaderboard()
 end
 --Funciones principales
 function ScoreManager.Init()
-	Players.PlayerAdded:connect(function(player)
+	Players.PlayerAdded:Connect(function(player)
 		scores[player] = 0
 
 		local leaderstats = Instance.new("Folder")

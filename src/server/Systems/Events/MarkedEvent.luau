@@ -15,7 +15,11 @@ local MarkedEvent = {}
 
 --Obtenermos los servicios que vamos a usar
 local ServerStorage = game:GetService("ServerStorage")
-
+local ServerScriptService = game:GetService("ServerScriptService")
+--Modulos a usar
+local Server = ServerScriptService:WaitForChild("Server")
+local Managers = Server:WaitForChild("Managers")
+local PlayerManager = require(Managers:WaitForChild("PlayerManager"))
 --Variables internas del evento
 local activeConnections = {}
 local markedPlayer = nil --Jugador que ha sido marcado
@@ -167,7 +171,7 @@ function MarkedEvent.Start(players, onEventFinished)
 	if humanoid then
 		local diedConnection = humanoid.Died:Connect(function()
 			print("El marcado ha muerto, ganan los cazadores")
-
+			PlayerManager.MarkPlayerEliminated(markedPlayer)
 			MarkedEvent.Cleanup(players)
 			onEventFinished("Hunters")
 		end)
