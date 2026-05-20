@@ -39,7 +39,7 @@ end
 function PlayerManager.SetRoundPlayers(players)
 	roundPlayers = {}
 	for _, player in ipairs(players) do
-		roundPlayers[player.UserId] = player
+		table.insert(roundPlayers, player)
 	end
 end
 --Devuelve la lista de jugadores de ronda

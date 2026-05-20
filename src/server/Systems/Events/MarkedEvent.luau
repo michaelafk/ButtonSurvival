@@ -27,32 +27,30 @@ local markedPlayer = nil --Jugador que ha sido marcado
 --Funciones auxiliares
 
 --Obtiene los jugadores vivos (con vida > 0)
-local function getAlivePlayers(players)
-	local alivePlayers = {}
+-- local function getAlivePlayers(players)
+-- 	local alivePlayers = {}
 
-	for _, player in ipairs(players) do
-		local character = player.Character
-		local humanoid = character and character:FindFirstChildOfClass("Humanoid")
+-- 	for _, player in ipairs(players) do
+-- 		local character = player.Character
+-- 		local humanoid = character and character:FindFirstChildOfClass("Humanoid")
 
-		--Solo añadimos jugadores que esten vivos
-		if humanoid and humanoid.Health > 0 then
-			table.insert(alivePlayers, player)
-		end
-	end
+-- 		--Solo añadimos jugadores que esten vivos
+-- 		if humanoid and humanoid.Health > 0 then
+-- 			table.insert(alivePlayers, player)
+-- 		end
+-- 	end
 
-	return alivePlayers
-end
+-- 	return alivePlayers
+-- end
 
 --Selecciona un jugador aleatorio entre los vivos
 local function chooseRandomPlayer(players)
-	local alivePlayers = getAlivePlayers(players)
-
-	if #alivePlayers == 0 then
+	if #players == 0 then
 		return nil
 	end
 
-	local randomIndex = math.random(1, #alivePlayers)
-	return alivePlayers[randomIndex]
+	local randomIndex = math.random(1, #players)
+	return players[randomIndex]
 end
 
 --Logica del evento
