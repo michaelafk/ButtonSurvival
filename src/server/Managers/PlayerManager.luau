@@ -37,7 +37,6 @@ function PlayerManager.Init(config)
 end
 --Crea la lista de jugadores que jugaran la partida
 function PlayerManager.SetRoundPlayers(players)
-	roundPlayers = {}
 	for _, player in ipairs(players) do
 		table.insert(roundPlayers, player)
 	end
@@ -57,8 +56,8 @@ end
 --Devuelve una lista de los jugadores vivos de la ronda
 function PlayerManager.GetAliveRoundPlayers()
 	local alivePlayers = {}
-	for userId, player in pairs(roundPlayers) do
-		if player.Parent == Players and not eliminatedPlayers[userId] then
+	for _, player in pairs(roundPlayers) do
+		if not eliminatedPlayers[player.UserId] then
 			table.insert(alivePlayers, player)
 		end
 	end
@@ -72,11 +71,11 @@ function PlayerManager.MarkPlayerEliminated(player)
 	eliminatedPlayers[player.UserId] = true
 end
 --Funcion que me dice si un jugador ha sido eliminado
-function PlayerManager.IsPlayerEliminated(player)
+function PlayerManager.PlayerEliminated(player)
 	if not player then
-		return false
+		return
 	end
-	return eliminatedPlayers[player.UserId] == true
+	eliminatedPlayers[player.userId] = true
 end
 --Reset de jugadores eliminados
 function PlayerManager.ResetEliminatedPlayers()

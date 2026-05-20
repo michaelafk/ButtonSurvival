@@ -26,23 +26,6 @@ local markedPlayer = nil --Jugador que ha sido marcado
 
 --Funciones auxiliares
 
---Obtiene los jugadores vivos (con vida > 0)
--- local function getAlivePlayers(players)
--- 	local alivePlayers = {}
-
--- 	for _, player in ipairs(players) do
--- 		local character = player.Character
--- 		local humanoid = character and character:FindFirstChildOfClass("Humanoid")
-
--- 		--Solo añadimos jugadores que esten vivos
--- 		if humanoid and humanoid.Health > 0 then
--- 			table.insert(alivePlayers, player)
--- 		end
--- 	end
-
--- 	return alivePlayers
--- end
-
 --Selecciona un jugador aleatorio entre los vivos
 local function chooseRandomPlayer(players)
 	if #players == 0 then
@@ -162,19 +145,23 @@ function MarkedEvent.Start(players, onEventFinished)
 	addMarkedHighlight(markedPlayer)
 	giveBatToHunters(players, markedPlayer)
 
-	-- Detectar si el marcado muere
-	local character = markedPlayer.Character
-	local humanoid = character and character:FindFirstChildOfClass("Humanoid")
+	for _, player in ipairs(players) do
+		local character = player.Character
+		local humanoid = character and character:FindFirstChildOfClass("Humanoid")
 
-	if humanoid then
-		local diedConnection = humanoid.Died:Connect(function()
-			print("El marcado ha muerto, ganan los cazadores")
-			PlayerManager.MarkPlayerEliminated(markedPlayer)
-			MarkedEvent.Cleanup(players)
-			onEventFinished("Hunters")
-		end)
-
-		table.insert(activeConnections, diedConnection)
+		if humanoid then
+			local diedConnection = humanoid.Died:Connect(function()
+				PlayerManager.PlayerEliminated(player)
+				if player == markedPlayer then
+					print("El marcado ha muerto, ganan los cazadores")
+					MarkedEvent.Cleanup(players)
+					onEventFinished("Hunters")
+				else
+					print(player.Name .. " cazador eliminado")
+				end
+			end)
+			table.insert(activeConnections, diedConnection)
+		end
 	end
 end
 --Fin por tiempo

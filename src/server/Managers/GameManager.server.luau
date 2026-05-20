@@ -118,7 +118,7 @@ local function runEnding()
 	--dar puntos por la ronda
 	ScoreManager.GiveSurvivalPoints(alivePlayers, markedPlayer)
 	--limpiar cualquier evento activo
-	local roundPlayers = PlayerManager.GetAllPlayers()
+	local roundPlayers = PlayerManager.GetRoundPlayers()
 	EventSystem.CleanupCurrentEvent(roundPlayers)
 	for i = GameConfig.ENDING_TIME, 1, -1 do
 		updateUI(GameConfig.GameStates.Ending, i, GameConfig.UI.EndingMessage)
