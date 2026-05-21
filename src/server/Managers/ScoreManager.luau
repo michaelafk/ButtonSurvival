@@ -19,7 +19,7 @@ local ScoreManager = {}
 local scores = {}
 local POINTS = {
 	surviveround = 100,
-	pressbutton = 25,
+	pressbutton = 20,
 	killmarked = 80,
 	markedsurvive = 200,
 }
