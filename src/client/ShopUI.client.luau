@@ -1,16 +1,20 @@
 --Servicions a usar
 local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+--Interfaz jugador
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
---Espera a que el ScreenGui cargue
+--Espera a que exista la UI
 local screenGui = playerGui:WaitForChild("GameUI")
---Referencias principales
 local shopFrame = screenGui:WaitForChild("ShopFrame")
 local shopBtn = screenGui:WaitForChild("Shop")
 local inventoryBtn = screenGui:WaitForChild("Inventory")
 local pointsImage = screenGui:WaitForChild("Points")
 local pointsLabel = pointsImage:WaitForChild("PointsLabel")
 local closeBtn = shopFrame:WaitForChild("CloseShopMenubtn")
+local Shared = ReplicatedStorage:WaitForChild("Shared")
+local Remotes = Shared:WaitForChild("Remotes")
+local buyEvent = Remotes:WaitForChild("buyEvent")
 
 --Puntos del jugador
 local leaderstats = player:WaitForChild("leaderstats")
@@ -22,19 +26,22 @@ local ITEMS = {
 		slot = "Item1",
 		name = "Knife",
 		cost = 15,
-		toolName = "Knife", -- nombre exacto de la Tool en ServerStorage/ReplicatedStorage
+		toolName = "Knife",
+		btnName = "Item1btn",
 	},
 	{
 		slot = "Item2",
 		name = "Bloxycola",
 		cost = 20,
 		toolName = "Bloxy Cola",
+		btnName = "Item2btn",
 	},
 	{
 		slot = "Item3",
 		name = "Sword",
 		cost = 30,
 		toolName = "ClassicSword",
+		btnName = "Item3btn",
 	},
 }
 
@@ -48,7 +55,7 @@ local function refreshItem(item)
 	if not frame then
 		return
 	end
-	local buyBtn = frame:FindFirstChildWhichIsA("TextButton")
+	local buyBtn = frame:FindFirstChild(item.btnName)
 	if not buyBtn then
 		return
 	end
@@ -87,8 +94,6 @@ local function buyItem(item)
 		return
 	end
 	--Descontar puntos en el servidor con un RemoteEvent
-	local repStorage = game:GetService("ReplicatedStorage")
-	local buyEvent = repStorage:WaitForChild("BuyItem")
 	buyEvent:FireServer(item.slot, item.cost, item.toolName)
 
 	owned[item.slot] = true
@@ -103,12 +108,16 @@ end)
 for _, item in ipairs(ITEMS) do
 	local frame = shopFrame:FindFirstChild(item.slot)
 	if frame then
-		local buyBtn = frame:FindFirstChildWhichIsA("TextButton")
+		local buyBtn = frame:FindFirstChild(item.btnName)
 		if buyBtn then
 			buyBtn.MouseButton1Click:Connect(function()
 				buyItem(item)
 			end)
+		else
+			warn("[ShopUI] no encontro el boton:  " .. item.btnName)
 		end
+	else
+		warn("[ShopUI] no se encontro el frame: " .. item.slot)
 	end
 end
 --Abrir/cerrar tienda con el botón Shop

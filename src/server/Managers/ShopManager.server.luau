@@ -1,6 +1,8 @@
 --Servicions a usar
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local ServerStorage = game:GetService("ServerStorage")
 --Modulos a usar
+local toolsFolder = ServerStorage:WaitForChild("Tools")
 local Shared = ReplicatedStorage:WaitForChild("Shared")
 local Remotes = Shared:WaitForChild("Remotes")
 --Eventos que se van a usar
@@ -25,7 +27,7 @@ buyEvent.OnServerEvent:Connect(function(player, slot, cost, toolName)
 	points.Value = points.Value - cost
 
 	--Dar la tool al backpack
-	local tool = ReplicatedStorage:FindFirstChild(toolName)
+	local tool = toolsFolder:FindFirstChild(toolName)
 	if tool then
 		local clone = tool:Clone()
 		clone.Parent = player.Backpack
