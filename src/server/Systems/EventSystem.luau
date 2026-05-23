@@ -40,7 +40,7 @@ function EventSystem.StartMarkedEvent(roundPlayers, onEventFinished)
 	currentEvent = MarkedEvent
 	EventSystem.SetCurrentEventResult({
 		EventName = "The Marked",
-		MarkedPlayer = currentEvent.GetMarkedPlayer(),
+		MarkedPlayer = nil,
 		Winner = nil,
 	})
 

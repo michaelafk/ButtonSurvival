@@ -92,7 +92,10 @@ function ScoreManager.GiveKillMarkedPoints(player)
 end
 
 function ScoreManager.GiveSurvivalPoints(alivePlayers, markedPlayer)
+	print("[ScoreManager] Dando puntos de supervivencia")
+	print("[ScoreManager] Marcado: ", markedPlayer and markedPlayer.Name or "Ninguno")
 	for _, player in ipairs(alivePlayers) do
+		print("[ScoreManager] Jugador vivo:",player.Name, "| es marcado:",player == markedPlayer)
 		if player == markedPlayer then
 			ScoreManager.AddPoints(player, POINTS.markedsurvive)
 		else

@@ -20,6 +20,7 @@ local ServerScriptService = game:GetService("ServerScriptService")
 local Server = ServerScriptService:WaitForChild("Server")
 local Managers = Server:WaitForChild("Managers")
 local PlayerManager = require(Managers:WaitForChild("PlayerManager"))
+local ScoreManager = require(Managers:WaitForChild("ScoreManager"))
 --Variables internas del evento
 local activeConnections = {}
 local markedPlayer = nil --Jugador que ha sido marcado
@@ -129,7 +130,7 @@ function MarkedEvent.GetMarkedPlayer()
 	return markedPlayer
 end
 --Inicio del evento
-function MarkedEvent.Start(players, onEventFinished)
+function MarkedEvent.Start(players, onEventFinished, onResultUpdate)
 	--Seleccionar jugador marcado
 	markedPlayer = chooseRandomPlayer(players)
 
@@ -141,6 +142,14 @@ function MarkedEvent.Start(players, onEventFinished)
 
 	print("Jugador marcado:", markedPlayer.Name)
 
+	--Actualizar el evensystem con el marcado real
+	if onResultUpdate then
+		onResultUpdate({
+			EventName = "The marked",
+			MarkedPlayer = markedPlayer,
+			Winner = nil,
+		})
+	end
 	-- Aplicar efectos
 	addMarkedHighlight(markedPlayer)
 	giveBatToHunters(players, markedPlayer)
@@ -153,7 +162,13 @@ function MarkedEvent.Start(players, onEventFinished)
 			local diedConnection = humanoid.Died:Connect(function()
 				PlayerManager.PlayerEliminated(player)
 				if player == markedPlayer then
-					print("El marcado ha muerto, ganan los cazadores")
+					print("[MarkedEvent] El marcado ha muerto, ganan los cazadores")
+					--Detectar quien matro al marcado
+					local creator = humanoid:FindFirstChild("creator")
+					if creator and creator.Value then
+						ScoreManager.GiveKillMarkedPoints(creator.Value)
+						print("[MarkedEvent] Puntos por matar al marcado dados a: ", creator.Value.Name)
+					end
 					MarkedEvent.Cleanup(players)
 					onEventFinished("Hunters")
 				else

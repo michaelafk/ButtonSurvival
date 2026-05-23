@@ -9,6 +9,7 @@ local buttonAppearedEvent = Remotes:WaitForChild("ButtonAppeared")
 local Server = ServerScriptService:WaitForChild("Server")
 local Managers = Server:WaitForChild("Managers")
 local PlayerManager = require(Managers:WaitForChild("PlayerManager"))
+local ScoreManager = require(Managers:WaitForChild("ScoreManager"))
 --Tabla
 local ButtonSystem = {}
 --Obtenemos los modelos a usar
@@ -106,10 +107,9 @@ local function handleButtonPressed(player)
 	animateButtonPress()
 
 	print("[ButtonSystem] El jugador " .. player.Name .. "ha pulsado el boton")
-	print("[ButtonSystem] Se va a ejecutar el evetno 'El marcado'")
+	ScoreManager.GiveButtonPressPoints(player)
 
 	--Inicio del evento
-	--Usaremos a todos los jugadores(luego se cambiara a solo los de la ronda)
 	local roundPlayers = PlayerManager.GetRoundPlayers()
 	EventSystem.StartMarkedEvent(roundPlayers, function(winner)
 		print("[ButtonSystem] Resultado del evento:", winner)
