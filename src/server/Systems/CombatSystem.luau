@@ -1,4 +1,3 @@
-local MarketplaceService = game:GetService("MarketplaceService")
 --[[
     CombatSystem.luau
     Sistema de control de combate

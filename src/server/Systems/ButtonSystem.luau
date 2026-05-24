@@ -1,11 +1,16 @@
 --Obtenermos los servicios que vamos a usar
 local TweenService = game:GetService("TweenService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local Players = game:GetService("Players")
+local ServerScriptService = game:GetService("ServerScriptService")
 --Obtenemos los modulos y los remotos a usar
 local Shared = ReplicatedStorage:WaitForChild("Shared")
 local Remotes = Shared:WaitForChild("Remotes")
 local buttonAppearedEvent = Remotes:WaitForChild("ButtonAppeared")
+local Server = ServerScriptService:WaitForChild("Server")
+local Managers = Server:WaitForChild("Managers")
+local PlayerManager = require(Managers:WaitForChild("PlayerManager"))
+local ScoreManager = require(Managers:WaitForChild("ScoreManager"))
+--Tabla
 local ButtonSystem = {}
 --Obtenemos los modelos a usar
 local buttonPart = workspace:WaitForChild("Button")
@@ -102,11 +107,10 @@ local function handleButtonPressed(player)
 	animateButtonPress()
 
 	print("[ButtonSystem] El jugador " .. player.Name .. "ha pulsado el boton")
-	print("[ButtonSystem] Se va a ejecutar el evetno 'El marcado'")
+	ScoreManager.GiveButtonPressPoints(player)
 
 	--Inicio del evento
-	--Usaremos a todos los jugadores(luego se cambiara a solo los de la ronda)
-	local roundPlayers = Players:GetPlayers()
+	local roundPlayers = PlayerManager.GetRoundPlayers()
 	EventSystem.StartMarkedEvent(roundPlayers, function(winner)
 		print("[ButtonSystem] Resultado del evento:", winner)
 		if winner == "Hunters" then

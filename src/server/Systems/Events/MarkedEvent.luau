@@ -15,40 +15,26 @@ local MarkedEvent = {}
 
 --Obtenermos los servicios que vamos a usar
 local ServerStorage = game:GetService("ServerStorage")
-
+local ServerScriptService = game:GetService("ServerScriptService")
+--Modulos a usar
+local Server = ServerScriptService:WaitForChild("Server")
+local Managers = Server:WaitForChild("Managers")
+local PlayerManager = require(Managers:WaitForChild("PlayerManager"))
+local ScoreManager = require(Managers:WaitForChild("ScoreManager"))
 --Variables internas del evento
 local activeConnections = {}
 local markedPlayer = nil --Jugador que ha sido marcado
 
 --Funciones auxiliares
 
---Obtiene los jugadores vivos (con vida > 0)
-local function getAlivePlayers(players)
-	local alivePlayers = {}
-
-	for _, player in ipairs(players) do
-		local character = player.Character
-		local humanoid = character and character:FindFirstChildOfClass("Humanoid")
-
-		--Solo añadimos jugadores que esten vivos
-		if humanoid and humanoid.Health > 0 then
-			table.insert(alivePlayers, player)
-		end
-	end
-
-	return alivePlayers
-end
-
 --Selecciona un jugador aleatorio entre los vivos
 local function chooseRandomPlayer(players)
-	local alivePlayers = getAlivePlayers(players)
-
-	if #alivePlayers == 0 then
+	if #players == 0 then
 		return nil
 	end
 
-	local randomIndex = math.random(1, #alivePlayers)
-	return alivePlayers[randomIndex]
+	local randomIndex = math.random(1, #players)
+	return players[randomIndex]
 end
 
 --Logica del evento
@@ -144,7 +130,7 @@ function MarkedEvent.GetMarkedPlayer()
 	return markedPlayer
 end
 --Inicio del evento
-function MarkedEvent.Start(players, onEventFinished)
+function MarkedEvent.Start(players, onEventFinished, onResultUpdate)
 	--Seleccionar jugador marcado
 	markedPlayer = chooseRandomPlayer(players)
 
@@ -156,23 +142,41 @@ function MarkedEvent.Start(players, onEventFinished)
 
 	print("Jugador marcado:", markedPlayer.Name)
 
+	--Actualizar el evensystem con el marcado real
+	if onResultUpdate then
+		onResultUpdate({
+			EventName = "The marked",
+			MarkedPlayer = markedPlayer,
+			Winner = nil,
+		})
+	end
 	-- Aplicar efectos
 	addMarkedHighlight(markedPlayer)
 	giveBatToHunters(players, markedPlayer)
 
-	-- Detectar si el marcado muere
-	local character = markedPlayer.Character
-	local humanoid = character and character:FindFirstChildOfClass("Humanoid")
+	for _, player in ipairs(players) do
+		local character = player.Character
+		local humanoid = character and character:FindFirstChildOfClass("Humanoid")
 
-	if humanoid then
-		local diedConnection = humanoid.Died:Connect(function()
-			print("El marcado ha muerto, ganan los cazadores")
-
-			MarkedEvent.Cleanup(players)
-			onEventFinished("Hunters")
-		end)
-
-		table.insert(activeConnections, diedConnection)
+		if humanoid then
+			local diedConnection = humanoid.Died:Connect(function()
+				PlayerManager.PlayerEliminated(player)
+				if player == markedPlayer then
+					print("[MarkedEvent] El marcado ha muerto, ganan los cazadores")
+					--Detectar quien matro al marcado
+					local creator = humanoid:FindFirstChild("creator")
+					if creator and creator.Value then
+						ScoreManager.GiveKillMarkedPoints(creator.Value)
+						print("[MarkedEvent] Puntos por matar al marcado dados a: ", creator.Value.Name)
+					end
+					MarkedEvent.Cleanup(players)
+					onEventFinished("Hunters")
+				else
+					print(player.Name .. " cazador eliminado")
+				end
+			end)
+			table.insert(activeConnections, diedConnection)
+		end
 	end
 end
 --Fin por tiempo

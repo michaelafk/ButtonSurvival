@@ -17,6 +17,8 @@ local lobbySpawn = nil
 local mapSpawn = nil
 --Funcion para consultar el estado actual del juego
 local getCurrentStateCallback = nil
+--Tabla de jugadores de la ronda
+local roundPlayers = {}
 --Tabla de jugadores eliminados durante la ronda
 local eliminatedPlayers = {}
 --Configuracion
@@ -33,6 +35,16 @@ function PlayerManager.Init(config)
 		PlayerManager.SetupPlayer(player)
 	end
 end
+--Crea la lista de jugadores que jugaran la partida
+function PlayerManager.SetRoundPlayers(players)
+	for _, player in ipairs(players) do
+		table.insert(roundPlayers, player)
+	end
+end
+--Devuelve la lista de jugadores de ronda
+function PlayerManager.GetRoundPlayers()
+	return roundPlayers
+end
 --Devuelve el numero total de jugadores conectados
 function PlayerManager.GetPlayerCount()
 	return #Players:GetPlayers()
@@ -40,6 +52,16 @@ end
 --Devuelve una lista de los jugadores conectados
 function PlayerManager.GetAllPlayers()
 	return Players:GetPlayers()
+end
+--Devuelve una lista de los jugadores vivos de la ronda
+function PlayerManager.GetAliveRoundPlayers()
+	local alivePlayers = {}
+	for _, player in pairs(roundPlayers) do
+		if not eliminatedPlayers[player.UserId] then
+			table.insert(alivePlayers, player)
+		end
+	end
+	return alivePlayers
 end
 --Funcion para decir que el jugador marcado ha sido eliminado
 function PlayerManager.MarkPlayerEliminated(player)
@@ -49,15 +71,19 @@ function PlayerManager.MarkPlayerEliminated(player)
 	eliminatedPlayers[player.UserId] = true
 end
 --Funcion que me dice si un jugador ha sido eliminado
-function PlayerManager.IsPlayerEliminated(player)
+function PlayerManager.PlayerEliminated(player)
 	if not player then
-		return false
+		return
 	end
-	return eliminatedPlayers[player.UserId] == true
+	eliminatedPlayers[player.userId] = true
 end
 --Reset de jugadores eliminados
 function PlayerManager.ResetEliminatedPlayers()
 	eliminatedPlayers = {}
+end
+--Reset de jugadores de ronda
+function PlayerManager.ResetRoundPlayers()
+	roundPlayers = {}
 end
 --Teletransporte
 --Esta funcion mueve un personaje concreto a una parte concreta.
@@ -95,17 +121,26 @@ function PlayerManager.TeleportAllPlayers(targetPart)
 		PlayerManager.TeleportPlayer(player, targetPart)
 	end
 end
+function PlayerManager.TeleportRoundPlayers(targetPart)
+	for _, player in pairs(roundPlayers) do
+		PlayerManager.TeleportPlayer(player, targetPart)
+	end
+end
 --Esta funcion hace que movamos a un jugador al lobby
 function PlayerManager.TeleportPlayerToLobby(player)
 	PlayerManager.TeleportPlayer(player, lobbySpawn)
 end
-
 function PlayerManager.TeleportAllPlayersToLobby()
 	PlayerManager.TeleportAllPlayers(lobbySpawn)
 end
-
+function PlayerManager.TeleportRoundPlayersToLobby()
+	PlayerManager.TeleportRoundPlayers(lobbySpawn)
+end
 function PlayerManager.TeleportAllPlayersToMap()
 	PlayerManager.TeleportAllPlayers(mapSpawn)
+end
+function PlayerManager.TeleportRoundPlayersToMap()
+	PlayerManager.TeleportRoundPlayers(mapSpawn)
 end
 --Gestion de jugadores
 --Esta funcion define donde aparece un jugador
