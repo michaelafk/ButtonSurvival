@@ -1,22 +1,28 @@
+--[[
+	ShopUI.luau
+
+	Responsabilidades:
+	- Abrir/Cerrar ShopFrame
+	- Refrescar botones segun puntos
+]]
 --Servicions a usar
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+--Modulos a usar
+local Shared = ReplicatedStorage:WaitForChild("Shared")
+local Remotes = Shared:WaitForChild("Remotes")
+--Remotes
+local buyEvent = Remotes:WaitForChild("buyEvent")
 --Interfaz jugador
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
---Espera a que exista la UI
 local screenGui = playerGui:WaitForChild("GameUI")
+--Referencias UI
+--Tienda
 local shopFrame = screenGui:WaitForChild("ShopFrame")
 local shopBtn = screenGui:WaitForChild("Shop")
-local inventoryBtn = screenGui:WaitForChild("Inventory")
-local pointsImage = screenGui:WaitForChild("Points")
-local pointsLabel = pointsImage:WaitForChild("PointsLabel")
 local closeBtn = shopFrame:WaitForChild("CloseShopMenubtn")
-local Shared = ReplicatedStorage:WaitForChild("Shared")
-local Remotes = Shared:WaitForChild("Remotes")
-local buyEvent = Remotes:WaitForChild("buyEvent")
-
---Puntos del jugador
+--Puntos del jugador leaderstats
 local leaderstats = player:WaitForChild("leaderstats")
 local pointsStat = leaderstats:WaitForChild("Points")
 
@@ -95,7 +101,6 @@ local function buyItem(item)
 	end
 	--Descontar puntos en el servidor con un RemoteEvent
 	buyEvent:FireServer(item.slot, item.cost, item.toolName)
-
 	owned[item.slot] = true
 	refreshShop()
 end
@@ -130,11 +135,6 @@ end)
 --Cerrar con la X roja
 closeBtn.MouseButton1Click:Connect(function()
 	shopFrame.Visible = false
-end)
---Boton Inventory (de momento solo cierra la tienda)
-inventoryBtn.MouseButton1Click:Connect(function()
-	shopFrame.Visible = false
-	--aqui se abriria el inventoryframe para guardar todo lo que se compra
 end)
 -- Estado inicial
 shopFrame.Visible = false
