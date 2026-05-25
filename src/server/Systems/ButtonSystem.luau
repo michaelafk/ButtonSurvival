@@ -19,7 +19,7 @@ local buttonPressed = false
 local onEventFinishedCallback = nil
 
 -- Cambia este valor durante las pruebas: "Random", "Marked", "Tsunami" o "Earthquake"
-local EVENT_TO_TEST = "Tsunami"
+local EVENT_TO_TEST = "Earthquake"
 
 local function startConfiguredGlobalEvent(roundPlayers, callback)
 	if EVENT_TO_TEST == "Marked" then
