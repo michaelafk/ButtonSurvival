@@ -1,0 +1,14 @@
+{
+  "Lua.workspace.library": [
+    "${3rd}/luau-lsp/library"
+  ],
+  "Lua.runtime.version": "Luau",
+  "[luau]": {
+    "editor.defaultFormatter": "JohnnyMorganz.luau-lsp",
+    "editor.formatOnSave": true
+  },
+  "files.exclude": {
+    "**/.git": true,
+    "**/node_modules": true
+  }
+}

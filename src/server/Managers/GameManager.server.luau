@@ -54,6 +54,20 @@ local function updateUI(state, timeLeft, message)
 	setStatusMessge(message)
 	broadcastUI(state, timeLeft, message)
 end
+
+local function getActiveEventMessage()
+	local eventName = EventSystem.GetCurrentEventName()
+
+	if eventName == "Tsunami" then
+		return "Tsunami en curso"
+	elseif eventName == "Earthquake" then
+		return "Terremoto en curso"
+	elseif eventName == "Marked" then
+		return "Marcado en curso"
+	end
+
+	return "Evento en curso"
+end
 --Sincronizacion inicial para jugadores nuevos
 getCurrentStateFunction.OnServerInvoke = function()
 	return currentGameState, currentTimeleft, currentStatusMessage
@@ -89,13 +103,35 @@ local function runMatch()
 	setGameState(GameConfig.GameStates.Match)
 	PlayerManager.TeleportAllPlayersToMap()
 	ButtonSystem.SpawnButton()
-	for i = GameConfig.MATCH_DURATION, 1, -1 do
-		if roundEnding then
-			break
+
+	local searchTimeLeft = GameConfig.MATCH_DURATION
+
+	while searchTimeLeft > 0 and not roundEnding do
+		if ButtonSystem.WasPressed() and EventSystem.IsEventActive() then
+			local eventTimeLeft = EventSystem.GetCurrentEventTimeLeft()
+
+			if eventTimeLeft then
+				-- Eventos con duracion propia, como Tsunami o Earthquake.
+				-- El contador mostrado pasa a ser el tiempo restante del evento.
+				updateUI(GameConfig.GameStates.Match, eventTimeLeft, getActiveEventMessage())
+			else
+				-- Eventos sin duracion propia, como Marked, siguen usando el tiempo restante de la ronda.
+				updateUI(GameConfig.GameStates.Match, searchTimeLeft, getActiveEventMessage())
+				searchTimeLeft -= 1
+
+				if searchTimeLeft <= 0 then
+					local roundPlayers = PlayerManager.GetAllPlayers()
+					EventSystem.FinishCurrentEventByTime(roundPlayers)
+				end
+			end
+		else
+			updateUI(GameConfig.GameStates.Match, searchTimeLeft, GameConfig.UI.MatchMessage)
+			searchTimeLeft -= 1
 		end
-		updateUI(GameConfig.GameStates.Match, i, GameConfig.UI.MatchMessage)
+
 		task.wait(1)
 	end
+
 	ButtonSystem.HideButton()
 end
 --Fase de cierre
