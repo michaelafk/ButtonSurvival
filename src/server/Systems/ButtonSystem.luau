@@ -1,27 +1,27 @@
 --Obtenermos los servicios que vamos a usar
 local TweenService = game:GetService("TweenService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local ServerScriptService = game:GetService("ServerScriptService")
+local Players = game:GetService("Players")
+
 --Obtenemos los modulos y los remotos a usar
 local Shared = ReplicatedStorage:WaitForChild("Shared")
 local Remotes = Shared:WaitForChild("Remotes")
 local buttonAppearedEvent = Remotes:WaitForChild("ButtonAppeared")
-local Server = ServerScriptService:WaitForChild("Server")
-local Managers = Server:WaitForChild("Managers")
-local PlayerManager = require(Managers:WaitForChild("PlayerManager"))
-local ScoreManager = require(Managers:WaitForChild("ScoreManager"))
---Tabla
 local ButtonSystem = {}
+
 --Obtenemos los modelos a usar
 local buttonPart = workspace:WaitForChild("Button")
 local topPart = buttonPart:WaitForChild("Top")
 local buttonSpawnsFolder = workspace:WaitForChild("ButtonSpawns")
 local proximityPrompt = buttonPart:WaitForChild("ProximityPrompt")
+
 --Obtenemos el sistema de eventos
 local EventSystem = require(script.Parent.EventSystem)
+
 --Variables a usar
 local buttonPressed = false
 local onEventFinishedCallback = nil
+
 --Devuelvetodos lo spuntos validos de spawn del boton
 local function getButtonSpawns()
 	local spawns = {}
@@ -32,6 +32,7 @@ local function getButtonSpawns()
 	end
 	return spawns
 end
+
 --Elige un punto aleatorio
 local function getRandomSpawn()
 	local spawns = getButtonSpawns()
@@ -42,6 +43,7 @@ local function getRandomSpawn()
 	local randomIndex = math.random(1, #spawns)
 	return spawns[randomIndex]
 end
+
 local function setModelVisibility(model, isvisible)
 	for _, descendant in pairs(model:GetDescendants()) do
 		if descendant:IsA("BasePart") or descendant:IsA("UnionOperation") then
@@ -50,6 +52,7 @@ local function setModelVisibility(model, isvisible)
 		end
 	end
 end
+
 local function animateButtonPress()
 	local originalCFrame = topPart.CFrame
 	local pressedCFrame = originalCFrame * CFrame.new(0, -0.5, 0)
@@ -69,10 +72,12 @@ local function animateButtonPress()
 	task.wait(0.05)
 	releaseTween:Play()
 end
+
 --Permite que el GameManager registre que debe pasar cuando un evento termina
 function ButtonSystem.SetOnEventFinished(callback)
 	onEventFinishedCallback = callback
 end
+
 --Hace aparecer el boton en una posición aleatoria
 function ButtonSystem.SpawnButton()
 	local chosenSpawn = getRandomSpawn()
@@ -87,15 +92,18 @@ function ButtonSystem.SpawnButton()
 
 	buttonAppearedEvent:FireAllClients("¡un boton ha apareceido en el mapa")
 end
+
 --oculta el boton
 function ButtonSystem.HideButton()
 	setModelVisibility(buttonPart, false)
 	proximityPrompt.Enabled = false
 end
+
 --Permite consultar si ya fue pulsado
 function ButtonSystem.WasPressed()
 	return buttonPressed
 end
+
 --Accion placeholder al pulsar
 local function handleButtonPressed(player)
 	if buttonPressed then
@@ -107,17 +115,22 @@ local function handleButtonPressed(player)
 	animateButtonPress()
 
 	print("[ButtonSystem] El jugador " .. player.Name .. "ha pulsado el boton")
-	ScoreManager.GiveButtonPressPoints(player)
+	print("[ButtonSystem] Se va a ejecutar el evento 'Tornado'")
 
 	--Inicio del evento
-	local roundPlayers = PlayerManager.GetRoundPlayers()
-	EventSystem.StartMarkedEvent(roundPlayers, function(winner)
+	--Usaremos a todos los jugadores(luego se cambiara a solo los de la ronda)
+	local roundPlayers = Players:GetPlayers()
+	EventSystem.StartTornadoEvent(roundPlayers, function(winner)
 		print("[ButtonSystem] Resultado del evento:", winner)
-		if winner == "Hunters" then
-			print("[ButtonSystem] Los cazadores ganan")
-		elseif winner == "Marked" then
-			print("[ButtonSystem] El marcado gana")
+
+		if typeof(winner) == "Instance" and winner:IsA("Player") then
+			print("[ButtonSystem] Ganador del tornado:", winner.Name)
+		elseif winner == "Survivors" then
+			print("[ButtonSystem] Hay supervivientes del tornado")
+		elseif winner == "NoWinner" then
+			print("[ButtonSystem] Nadie sobrevivio al tornado")
 		end
+
 		buttonPressed = false
 		--Avisamos al GameManager de que el evento ha terminado
 		if onEventFinishedCallback then
