@@ -5,11 +5,11 @@
 
     Version ajustada:
     - No crea escombros externos que caen del cielo.
-    - Las zonas rojas son el peligro principal: si estas dentro cuando impacta, mueres.
-    - La destruccion se limita a piezas concretas del mapa, no a modelos completos.
+    - Las zonas rojas son el peligro real: solo mueres si estas dentro cuando impacta.
+    - Cada temblor genera mas zonas rojas, con destruccion localizada en esas zonas.
     - Si una carpeta grande como "Ciudad" tiene DestroyInEarthquake = true, se registran sus piezas,
       pero cada temblor solo rompe pocas piezas en la zona marcada.
-    - Se reduce la vibracion fisica para evitar muertes inevitables.
+    - La vibracion fisica es leve; no debe matar por empujones ni por piezas rebotando.
 ]]
 
 local Players = game:GetService("Players")
@@ -24,28 +24,28 @@ local CONFIG = {
 
 	TREMOR_INTERVAL_MIN = 5,
 	TREMOR_INTERVAL_MAX = 10,
-	IMPACTS_PER_TREMOR_MIN = 1,
-	IMPACTS_PER_TREMOR_MAX = 2,
+	IMPACTS_PER_TREMOR_MIN = 3,
+	IMPACTS_PER_TREMOR_MAX = 6,
 
-	WARNING_TIME = 2,
-	IMPACT_RADIUS = 9,
-	IMPACT_KILL_HEIGHT = 14,
+	WARNING_TIME = 2.1,
+	IMPACT_RADIUS = 15,
+	IMPACT_KILL_HEIGHT = 20,
 
 	-- Destruccion localizada y controlada.
-	MAX_PARTS_DESTROYED_PER_IMPACT = 2,
-	MAX_TOTAL_PARTS_DESTROYED = 45,
+	MAX_PARTS_DESTROYED_PER_IMPACT = 3,
+	MAX_TOTAL_PARTS_DESTROYED = 110,
 
 	-- Fuerza baja para que el mapa tiemble sin explotar.
-	DESTRUCTION_PUSH_SPEED = 10,
-	DESTRUCTION_UP_SPEED = 3,
-	DESTRUCTION_ANGULAR_SPEED = 1.5,
+	DESTRUCTION_PUSH_SPEED = 12,
+	DESTRUCTION_UP_SPEED = 3.5,
+	DESTRUCTION_ANGULAR_SPEED = 2.5,
 
-	LOOSE_PART_REACTIVATION_SPEED = 7,
-	LOOSE_PART_UP_SPEED = 2,
-	LOOSE_PART_SHAKE_RADIUS = 10,
+	LOOSE_PART_REACTIVATION_SPEED = 5,
+	LOOSE_PART_UP_SPEED = 1.5,
+	LOOSE_PART_SHAKE_RADIUS = 8,
 
 	-- Sacudida leve al jugador. El peligro real debe ser la zona roja.
-	PLAYER_SHAKE_SPEED = 1.5,
+	PLAYER_SHAKE_SPEED = 0.8,
 
 	ENABLE_MOVING_PART_DAMAGE = false,
 	MIN_DESTRUCTIBLE_KILL_SPEED = 85,
@@ -53,8 +53,8 @@ local CONFIG = {
 	FALLBACK_IMPACT_RANGE = 80,
 
 	-- Evita romper piezas enormes como suelo, carretera o bloques base.
-	MAX_PART_VOLUME_TO_BREAK = 6000,
-	MAX_PART_AXIS_TO_BREAK = 90,
+	MAX_PART_VOLUME_TO_BREAK = 12000,
+	MAX_PART_AXIS_TO_BREAK = 125,
 }
 
 local DESTROY_ATTRIBUTE = "DestroyInEarthquake"

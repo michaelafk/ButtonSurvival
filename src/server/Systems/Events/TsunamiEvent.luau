@@ -5,10 +5,10 @@
 
     Version ajustada:
     - La ola sigue matando al jugador si lo toca.
-    - La destruccion queda limitada a piezas concretas, no a modelos completos.
+    - La destruccion es mas intensa, pero sigue limitada a la zona atravesada por la ola.
     - Si una carpeta grande como "Ciudad" tiene DestroyInTsunami = true, no se rompe toda de golpe:
       se registran sus piezas internas y se rompen pocas por pasada.
-    - Se reduce mucho la fuerza aplicada a los objetos para evitar muertes inevitables y destruccion exagerada.
+    - La ola arrasa mas piezas a su paso, sin empujar con fuerza suficiente para destrozar zonas adelantadas.
 ]]
 
 local RunService = game:GetService("RunService")
@@ -29,23 +29,23 @@ local CONFIG = {
 	WAVE_FOAM_TRANSPARENCY = 0.15,
 	WAVE_FOAM_PARTS = 18,
 
-	-- Destruccion controlada.
-	DESTRUCTION_CHECK_INTERVAL = 0.14,
-	MAX_PARTS_DESTROYED_PER_CHECK = 2,
-	MAX_TOTAL_PARTS_DESTROYED = 70,
+	-- Destruccion localizada: intensa mientras la ola toca las piezas, sin romper por delante.
+	DESTRUCTION_CHECK_INTERVAL = 0.10,
+	MAX_PARTS_DESTROYED_PER_CHECK = 9,
+	MAX_TOTAL_PARTS_DESTROYED = 220,
 
-	-- Fuerza baja: visualmente se desplazan, pero no arrasan medio mapa.
-	DESTRUCTION_PUSH_SPEED = 16,
-	DESTRUCTION_UP_SPEED = 3,
-	DESTRUCTION_ANGULAR_SPEED = 1.5,
+	-- Fuerza media-baja: suficiente para ver arrastre, pero sin provocar una explosion fisica.
+	DESTRUCTION_PUSH_SPEED = 26,
+	DESTRUCTION_UP_SPEED = 5,
+	DESTRUCTION_ANGULAR_SPEED = 3,
 
 	-- Para que no sea una muerte inevitable por objetos rebotando.
 	ENABLE_DESTRUCTIBLE_DAMAGE = false,
 	MIN_DESTRUCTIBLE_KILL_SPEED = 85,
 
 	-- Evita romper piezas enormes como suelo, carretera o bloques base.
-	MAX_PART_VOLUME_TO_BREAK = 6000,
-	MAX_PART_AXIS_TO_BREAK = 90,
+	MAX_PART_VOLUME_TO_BREAK = 12000,
+	MAX_PART_AXIS_TO_BREAK = 125,
 }
 
 local DESTROY_ATTRIBUTE = "DestroyInTsunami"
